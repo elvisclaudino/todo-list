@@ -1,6 +1,11 @@
 @for (item of inputListItems; track item) {
 <label class="input-label-text" [for]="item.id">
-  <input type="checkbox" #inputCheckbox [checked]="item.checked" />
+  <input
+    type="checkbox"
+    #inputCheckbox
+    [checked]="item.checked"
+    (input)="updateItemCheckbox(item.id, inputCheckbox.checked)"
+  />
   <input
     type="text"
     #inputValue

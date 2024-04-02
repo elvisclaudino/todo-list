@@ -1,6 +1,6 @@
+import { IListItems } from './../../interfaces/IListItems.interface';
 import { Component, signal } from '@angular/core';
 import { InputAddItemComponent } from '../../components/input-add-item/input-add-item.component';
-import { IListItems } from '../../interfaces/IListItems.interface';
 import { InputListItemComponent } from '../../components/input-list-item/input-list-item.component';
 
 @Component({
@@ -41,6 +41,26 @@ export class ListComponent {
 
       return res;
     });
+  }
+
+  public updateItemCheckbox(newItem: { id: string; checked: boolean }) {
+    this.#setListItems.update((oldValue: IListItems[]) => {
+      oldValue.filter((res) => {
+        if (res.id === newItem.id) {
+          res.checked = newItem.checked;
+          return res;
+        }
+
+        return res;
+      });
+
+      return oldValue;
+    });
+
+    return localStorage.setItem(
+      '@my-list',
+      JSON.stringify(this.#setListItems())
+    );
   }
 
   public deleteAllItems() {
