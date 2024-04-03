@@ -2,6 +2,7 @@ import { IListItems } from './../../interfaces/IListItems.interface';
 import { Component, signal } from '@angular/core';
 import { InputAddItemComponent } from '../../components/input-add-item/input-add-item.component';
 import { InputListItemComponent } from '../../components/input-list-item/input-list-item.component';
+import { ELocalStorage } from '../../enum/eLocalStorage.enum';
 
 @Component({
   selector: 'app-list',
@@ -17,12 +18,19 @@ export class ListComponent {
   public getListItems = this.#setListItems.asReadonly();
 
   #parseItems() {
-    return JSON.parse(localStorage.getItem('@my-list') || '[]');
+    return JSON.parse(localStorage.getItem(ELocalStorage.MY_LIST) || '[]');
+  }
+
+  #updateLocalStorage() {
+    return localStorage.setItem(
+      ELocalStorage.MY_LIST,
+      JSON.stringify(this.#setListItems())
+    );
   }
 
   public getInputAndAddItem(value: IListItems) {
     localStorage.setItem(
-      '@my-list',
+      ELocalStorage.MY_LIST,
       JSON.stringify([...this.#setListItems(), value])
     );
 
@@ -57,14 +65,36 @@ export class ListComponent {
       return oldValue;
     });
 
-    return localStorage.setItem(
-      '@my-list',
-      JSON.stringify(this.#setListItems())
-    );
+    this.#updateLocalStorage();
+  }
+
+  public updateItemText(newItem: { id: string; value: string }) {
+    this.#setListItems.update((oldValue: IListItems[]) => {
+      oldValue.filter((res) => {
+        if (res.id === newItem.id) {
+          res.value = newItem.value;
+          return res;
+        }
+
+        return res;
+      });
+
+      return oldValue;
+    });
+
+    this.#updateLocalStorage();
+  }
+
+  public deleteItem(id: string) {
+    this.#setListItems.update((oldValue: IListItems[]) => {
+      return oldValue.filter((res) => res.id !== id);
+    });
+
+    this.#updateLocalStorage();
   }
 
   public deleteAllItems() {
-    localStorage.removeItem('@my-list');
+    localStorage.removeItem(ELocalStorage.MY_LIST);
     return this.#setListItems.set(this.#parseItems());
   }
 }

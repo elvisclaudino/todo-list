@@ -19,4 +19,19 @@ export class InputListItemComponent {
   public updateItemCheckbox(id: string, checked: boolean) {
     return this.outputUpdateItemCheckbox.emit({ id, checked });
   }
+
+  @Output() public outputUpdateItemText = new EventEmitter<{
+    id: string;
+    value: string;
+  }>();
+
+  public updateItemText(id: string, value: string) {
+    return this.outputUpdateItemText.emit({ id, value });
+  }
+
+  @Output() public outputDeleteItem = new EventEmitter<string>();
+
+  public deleteItem(id: string) {
+    return this.outputDeleteItem.emit(id);
+  }
 }
